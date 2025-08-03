@@ -1,21 +1,21 @@
-// app/login/page.js
-"use client";
+'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { setAccessToken } from '../../lib/auth';
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+const LoginPage = () => {
+  const [email, setEmail] = useState('john@mail.com');
+  const [password, setPassword] = useState('changeme');
+  const [error, setError] = useState('');
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('https://fakeapi.platzi.com/en/rest/auth-jwt/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -23,83 +23,47 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-      setMessage(data.message);
-      
-      if (response.ok) {
-        // Simpan userId dan email di localStorage
-        const userName = data.user.email.split('@')[0];
-        localStorage.setItem('userId', data.user.id);
-        localStorage.setItem('userEmail', data.user.email);
-        localStorage.setItem('userName', userName);
-        
-        router.push('/dashboard');
+      if (!response.ok) {
+        throw new Error('Login failed. Please check your credentials.');
       }
 
-    } catch (error) {
-      console.error(error);
-      setMessage('Something went wrong. Please try again.');
+      const data = await response.json();
+      setAccessToken(data.access_token);
+      router.push('/profile');
+    } catch (err) {
+      setError(err.message);
     }
   };
 
   return (
-    <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img
-          alt="Your Company"
-          src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-          className="mx-auto h-10 w-auto"
-        />
-        <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-          Sign in to your account
-        </h2>
-      </div>
-      
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">Email</label>
-            <div className="mt-2">
-              <input
-                id="email"
-                type="email"
-                value={email}
-                required
-                onChange={(e) => setEmail(e.target.value)}
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">Password</label>
-            <div className="mt-2">
-              <input
-                id="password"
-                type="password"
-                value={password}
-                required
-                onChange={(e) => setPassword(e.target.value)}
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-              />
-            </div>
-          </div>
-
-          <div>
-            <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-              Sign in
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {message && <p>{message}</p>}
-
-      <div className="mt-2">
-        <p className="mt-10 text-center text-sm/6 text-gray-500">
-        Belum punya akun? <Link href="/register" className="font-semibold text-indigo-600 hover:text-indigo-500">Daftar di sini</Link>
-        </p>
-      </div>
+    <div className="flex justify-center items-center h-screen flex-col">
+      <h1 className="text-2xl font-bold mb-4">Login</h1>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-80 p-6 border rounded-lg shadow-md bg-white">
+        <label className="block">
+          <span className="text-gray-700">Email:</span>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          />
+        </label>
+        <label className="block">
+          <span className="text-gray-700">Password:</span>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          />
+        </label>
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+        <button type="submit" className="mt-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          Login
+        </button>
+      </form>
     </div>
   );
-}
+};
+
+export default LoginPage;

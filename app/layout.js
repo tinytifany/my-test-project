@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: 'Next.js To-Do App',
-  description: 'Full-stack to-do list app with Next.js and Prisma',
+  title: 'Test Level 2 FE Tifany',
+  description: 'Test Level 2 FE Tifany',
 };
 
 export default function RootLayout({ children }) {

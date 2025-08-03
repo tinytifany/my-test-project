@@ -14,18 +14,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// prisma/schema.prisma
-model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  password String
-  todos    Todo[]
+model Owner {
+  id         Int @id @default(autoincrement())
+  owner_name String? @db.VarChar(225)
+  ProductOwner ProductOwner[]
+
+  @@map("owners")
 }
 
-model Todo {
-  id          Int     @id @default(autoincrement())
-  task        String
-  is_completed Boolean @default(false)
-  user_id     Int
-  user        User    @relation(fields: [user_id], references: [id])
+model Product {
+  product_id      Int @id @default(autoincrement())
+  product_name    String? @db.VarChar(85)
+  product_brand   String? @db.VarChar(45)
+  created_date    String? @db.VarChar(45)
+  ProductOwner ProductOwner?
+
+  @@map("products")
+}
+
+model ProductOwner {
+  products_id Int  @id @unique
+  owners_id   Int?
+  product     Product  @relation(fields: [products_id], references: [product_id])
+  owner       Owner?   @relation(fields: [owners_id], references: [id])
+
+  @@map("products_owners")
 }
