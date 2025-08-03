@@ -6,19 +6,19 @@ import { usePathname, useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userEmail, setUserEmail] = useState('');
+  const [userName, setUserName] = useState('');
   const router = useRouter();
   const pathname = usePathname(); // Gunakan usePathname untuk mendapatkan path
 
   const checkLoginStatus = () => {
     const userId = localStorage.getItem('userId');
-    const email = localStorage.getItem('userEmail');
+    const name = localStorage.getItem('userName');
     if (userId) {
       setIsLoggedIn(true);
-      setUserEmail(email);
+      setUserName(name);
     } else {
       setIsLoggedIn(false);
-      setUserEmail('');
+      setUserName('');
     }
   };
 
@@ -28,7 +28,9 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem('userId');
-    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userName');
+    setIsLoggedIn(false);
+    setUserName('');
     router.push('/login');
   };
 
@@ -36,15 +38,49 @@ export default function Navbar() {
     return null;
   }
 
+  // URL avatar dari DiceBear API. 'seed' diisi dengan nama pengguna.
+  const avatarUrl = `https://api.dicebear.com/7.x/pixel-art/svg?seed=${userName}`;
+
   return (
-    <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', background: '#f0f0f0' }}>
-      <span style={{ fontWeight: 'bold' }}>Aplikasi To-Do</span>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ marginRight: '1rem' }}>{userEmail}</span>
-        <Link href="/dashboard" style={{ marginRight: '1rem' }}>Dashboard</Link>
-        <Link href="/joke" style={{ marginRight: '1rem' }}>Joke</Link>
-        <button onClick={handleLogout} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">Logout</button>
-      </div>
-    </nav>
+    <div className="min-h-full">
+      <nav className="bg-gray-800">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
+            <div className="flex items-center">
+                <img
+                  alt="Your Company"
+                  src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
+                  className="size-8"
+                />
+                <span className="font-bold text-xl text-gray-300 hover:bg-gray-700 hover:text-white">Aplikasi To-Do</span>
+              </div>
+              <div className="hidden md:block">
+                <div className="ml-10 flex items-baseline space-x-4">
+                  <Link href="/dashboard" className="rounded-md px-3 py-2 text-lg font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Dashboard</Link>
+                  <Link href="/joke" className="rounded-md px-3 py-2 text-lg font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Joke</Link>
+                </div>
+              </div>
+              <div className="hidden md:block">
+                <div className="ml-4 flex items-center">
+                  <button 
+                    onClick={handleLogout} 
+                    className="px-3 py-1 text-sm font-medium bg-red-500 text-white rounded hover:bg-red-600 transition-colors mx-5"
+                  >
+                    Logout
+                  </button>
+                <div className="flex flex-col items-center">
+                  <img
+                    src={avatarUrl}
+                    alt="User Avatar"
+                    className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus-visible:ring-2 focus-visible:ring-white"
+                  />
+                  <p className="text-xs font-medium text-gray-300">{userName}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
   );
 }

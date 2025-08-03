@@ -94,34 +94,44 @@ export default function DashboardPage() {
 
   return (
     <div className="container-class-tailwind">
-      <div className="p-8 max-w-2xl mx-auto font-sans">
-        <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-bold m-0">To-Do List</h1>
-            {/* <button onClick={handleLogout} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
-            Logout
-            </button> */}
+      <div className="bg-white shadow-sm">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">To-Do List</h1>
         </div>
-
+      </div>
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       {/* Form untuk CREATE */}
-      <form onSubmit={handleCreateTodo} className="flex mb-8">
-        <input
-          type="text"
-          value={task}
-          onChange={(e) => setTask(e.target.value)}
-          placeholder="Add a new task..."
-          className="flex-grow p-3 border border-gray-300 rounded mr-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button type="submit" className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
-          Add
-        </button>
+      <form onSubmit={handleCreateTodo}>
+        <div class="space-y-2">
+          <label htmlFor="task" class="block text-sm font-medium leading-6 text-gray-900">
+            Add Task
+          </label>
+          <div class="flex gap-x-4">
+            <input
+              id="task"
+              type="text"
+              value={task}
+              onChange={(e) => setTask(e.target.value)}
+              placeholder="Add a new task..."
+              className="block flex-auto rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            />
+            <button 
+              type="submit" 
+              className="rounded-md bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              Add
+            </button>
+          </div>
+        </div>
       </form>
-
+      </div>
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       {/* Daftar todo untuk READ, UPDATE, DELETE */}
       <ul className="list-none p-0">
         {todos.map((todo) => (
           <li
             key={todo.id}
-            className="flex justify-between items-center p-4 border-b border-gray-200 hover:bg-gray-50 transition-colors"
+            className="flex justify-between items-center p-4 border-b border-gray-200 hover:bg-gray-50 transition-colors block text-sm font-medium leading-6 text-gray-900"
           >
             <span
               className={`flex-grow ${todo.is_completed ? 'line-through text-gray-500' : ''}`}
@@ -131,18 +141,18 @@ export default function DashboardPage() {
             <div>
               <button
                 onClick={() => handleUpdateTodo(todo.id, todo.is_completed)}
-                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors mr-2"
+                className="px-3 py-1 text-sm font-medium bg-green-500 text-white rounded hover:bg-green-600 transition-colors mr-2"
               >
                 {todo.is_completed ? 'Undo' : 'Complete'}
               </button>
-              <button onClick={() => handleDeleteTodo(todo.id)} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+              <button onClick={() => handleDeleteTodo(todo.id)} className="px-3 py-1 text-sm font-medium bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
                 Delete
               </button>
             </div>
           </li>
         ))}
       </ul>
-      </div>
+    </div>
     </div>
   );
 }
